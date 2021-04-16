@@ -1,0 +1,37 @@
+{
+	"dbfile": "/var/lib/database/apron.db",
+	"mqttbroker": "mqtt.local",
+	"mqttusername": "mqttuser",
+	"mqttpassword": "s3cr3t",
+	"subscribeTopic": "+/+/+/set",
+	"publishTopicTemplate": "homeassistant/%s/%s",
+	"availableTopic": "homeassistant/wink/available",
+	"onlinePayload": "online",
+	"offlinePayload": "offline",
+    "logLevel": 0,
+    "devices": [
+        {
+            "id": 13,
+            "name": "front_doorlock"
+        },
+        {
+            "id": 14,
+            "name": "basement_doorlock"
+        }
+    ],
+    "attributes": [
+		{
+            "id": 10,
+            "name": "lock"
+        },
+		{
+            "id": 15,
+            "name": "battery_level"
+        },
+		{
+            "id": 23,
+            "name": "auto_lock"
+        }
+    ]
+}
+

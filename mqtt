@@ -1,0 +1,24 @@
+#!/bin/sh
+
+source /usr/sbin/terminate_verify
+
+case "${1}" in
+start)
+echo -n "Starting mqtt..."
+# make a FIFO for log output and read logs
+#nohup /usr/bin/node --max_old_space_size=10 --max-stack-size=5 --max_executable_size=5 /opt/wink-mqtt/wink-mqtt.js >> /var/log/mqtt.log 2>&1 &
+nohup /opt/wink-mqtt/mqttwink /opt/wink-mqtt/config.json >> /var/log/mqtt.log 2>&1 &
+;;
+stop)
+echo -n "Stopping mqtt..."
+#terminate_verify node
+terminate_verify mqttwink
+;;
+restart)
+${0} stop
+sleep 1
+${0} start
+;;
+*)
+echo "Usage: $0 [start|stop|restart]"
+;;
