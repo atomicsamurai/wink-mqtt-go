@@ -103,10 +103,11 @@ func getAttributeNameFromID(id string) string {
 	return ""
 }
 
-func isTopicRelevant(topic string) bool {
+func isNameRelevant(name string) bool {
 	for index, value := range config.Devices {
 		_ = index
-		if value.Name == topic {
+		// log.Printf("name: %s, devicename: %s\n", name, value.Name)
+		if value.Name == name {
 			return true
 		}
 	}
@@ -114,14 +115,17 @@ func isTopicRelevant(topic string) bool {
 }
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-    log.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
+    log.Printf("messagePubHandler Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 }
 
 var messageSubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
     log.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
-	if isTopicRelevant(msg.Topic()) {
-		split_array := strings.Split(msg.Topic(), "/")
+	split_array := strings.Split(msg.Topic(), "/")
+	// log.Printf("name: %s", split_array[1])
+	if isNameRelevant(split_array[1]) {
+		log.Printf("command for device %s\n", split_array[1])
 		if split_array[3] == "set" {
+			log.Printf("sending %s:%s to device %s\n", split_array[2], string(msg.Payload()[:]), split_array[1])
 			updateDevice(split_array[1], split_array[2], string(msg.Payload()[:]))
 		}
 	}
@@ -208,7 +212,7 @@ func checkDatabase(init bool) error {
 				publishMQTT(client, split_array[0], split_array[1], split_array[2])
 				cached_state[split_array[0]][split_array[1]] = split_array[2]
 			} else {
-				log.Printf("not relevant : updated - device: %s, attribute: %s, new value: %s\n", split_array[0], split_array[1], split_array[2])
+				log.Printf("not relevant : device: %s, attribute: %s, new value: %s\n", split_array[0], split_array[1], split_array[2])
 				// log.Println("")
 			}
 		}
